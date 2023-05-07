@@ -4,6 +4,7 @@
 package dcc025.sudoku;
 
 import static java.lang.System.exit;
+import java.util.Random;
 import java.util.Scanner;
 
 /**
@@ -69,6 +70,9 @@ public class Sudoku {
     public static void jogoDefinido() {
         System.out.println("Voce escolheu definir o próprio jogo");
         int[][] board = new int[9][9];
+        System.out.println("-----------------------------------------------------------------------------------------------");
+        System.out.println("Digite: Sair - Quando tiver terminado de definir seu jogo");
+        System.out.println("-----------------------------------------------------------------------------------------------");
         System.out.println("Defina seu jogo:");
         adicionarJogada(board);
         acoes(board);
@@ -76,28 +80,39 @@ public class Sudoku {
     }
 
     public static void jogoAleatorio() {
+        Scanner teclado = new Scanner(System.in);
         System.out.println("Voce escolheu um jogo aleatório");
         int[][] board = new int[9][9];
         System.out.println("Quantos números você gostaria de sortear?");
+        int quantidade =0;
+        while(quantidade <=0 || quantidade >65){
+            System.out.println("Por favor, digite um número entre 1 e 65");
+            quantidade = teclado.nextInt();
+        }
+        adicionarNumerosAleatorios(board, quantidade);
+        System.out.println("Tabuleiro gerado de forma aleatória:");
+        printSudoku(board);
+        acoes(board);
+
     }
 
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+    public static void adicionarNumerosAleatorios(int[][] board, int quantidade) {
+        Random random = new Random();
+        int tentativas = 0;
+        while (quantidade > 0 && tentativas < 100000) {
+            int linha = random.nextInt(9);
+            int coluna = random.nextInt(9);
+            int valor = random.nextInt(9) + 1;
+            if (board[linha][coluna] == 0 && verificarColunas(board, coluna, valor) && verificarLinhas(board, linha, valor) && verificarQuadrados(board, linha, coluna, valor)) {
+                board[linha][coluna] = valor;
+                quantidade--;
+            }
+            tentativas++;
+        }
+    }
+
     public static void acoes(int board[][]) {
+        printSudoku(board);
         Scanner teclado = new Scanner(System.in);
         while (true) {
             System.out.println("Selecione qual a ação que gostaria de fazer dentre as opções abaixo:");
@@ -105,10 +120,11 @@ public class Sudoku {
             System.out.println("b) Remover jogada");
             System.out.println("c) Verificar tabuleiro");
             System.out.println("d) Sair do jogo");
-            printSudoku(board);
             String option1 = teclado.next().toLowerCase();
             if ("a".equals(option1)) {
-
+                System.out.println("-----------------------------------------------------------------------------------------------");
+                System.out.println("Você Selecionou adicionar uma ou mais jogadas, quando tiver terminado digite a palavra: sair");
+                System.out.println("-----------------------------------------------------------------------------------------------");
                 adicionarJogada(board);
                 printSudoku(board);
 
@@ -117,15 +133,27 @@ public class Sudoku {
                 removerJogada(board);
                 printSudoku(board);
             } else if ("c".equals(option1)) {
-                 boolean verifyLinha = verificarLinhas(board);
+                boolean verifyLinha = verificarLinhas(board);
                 boolean verifyColuna = verificarColunas(board);
                 boolean verifyQuadrados = verificarQuadrados(board);
-                if (verifyColuna ==true && verifyLinha ==true && verifyQuadrados ) {
-                    System.out.println("parabens, voce completou");
+                
+                if (verifyColuna == true && verifyLinha == true && verifyQuadrados) {
+                    System.out.println("Parabens, você completou o SUDOKU, Gostaria de jogar novamente?");
+                    System.out.println("a) SIM)");
+                    System.out.println("Pressione qualquer outra para sair");
+                    String option3 = teclado.next().toLowerCase();
+                        if("a".equals(option3)){
+                            apresentacao();
+                        }
+                        else {
+                            System.out.println("Obrigado por jogar!");
+                            exit(0);
+                        }
+                        
                 } else {
                     System.out.println("que pena, continue tentando");
                 }
-                printSudoku(board);
+
             } else if ("d".equals(option1)) {
                 System.out.println("Foi bom jogar com você :) ");
                 exit(0);
@@ -135,79 +163,106 @@ public class Sudoku {
         }
     }
 
-
-        // Verifica cada linha
-
-public static boolean verificarLinhas(int[][] board) {
-    for (int i = 0; i < 9; i++) { 
-        boolean[] numerosEncontrados = new boolean[9]; 
-        for (int j = 0; j < 9; j++) { 
-            int numeroAtual = board[i][j];
-            if (numeroAtual != 0) { 
-                if (numerosEncontrados[numeroAtual - 1] ) { 
-                    return false;
-                } else {
-                    numerosEncontrados[numeroAtual - 1] = true; 
-                }
-            }
-            else{
-                return false;
-            }
-        }
-    }
-    return true; 
-}
-public static boolean verificarColunas(int[][] board) {
-    for (int j = 0; j < 9; j++) { 
-        boolean[] numerosEncontrados = new boolean[9]; 
-        for (int i = 0; i < 9; i++) { 
-            int numeroAtual = board[i][j];
-            if (numeroAtual != 0) { 
-                if (numerosEncontrados[numeroAtual - 1]) { 
-                    return false;
-                } else {
-                    numerosEncontrados[numeroAtual - 1] = true; 
-                }
-            } else {
-                return false;
-            }
-        }
-    }
-    return true; 
-}
-public static boolean verificarQuadrados(int[][] board) {
-    for (int k = 0; k < 9; k++) { 
-        boolean[] numerosEncontrados = new boolean[9]; 
-        int linhaInicial = (k / 3) * 3; 
-        int colunaInicial = (k % 3) * 3; 
-        for (int i = linhaInicial; i < linhaInicial + 3; i++) { 
-            for (int j = colunaInicial; j < colunaInicial + 3; j++) { 
+    public static boolean verificarLinhas(int[][] board) {
+        for (int i = 0; i < 9; i++) {
+            boolean[] numerosEncontrados = new boolean[9];
+            for (int j = 0; j < 9; j++) {
                 int numeroAtual = board[i][j];
-                if (numeroAtual != 0) { 
-                    if (numerosEncontrados[numeroAtual - 1]) { 
+                if (numeroAtual != 0) {
+                    if (numerosEncontrados[numeroAtual - 1]) {
+                        
                         return false;
                     } else {
-                        numerosEncontrados[numeroAtual - 1] = true; 
+                        numerosEncontrados[numeroAtual - 1] = true;
                     }
                 } else {
                     return false;
                 }
             }
         }
+        return true;
     }
-    return true; 
-}
 
+    public static boolean verificarColunas(int[][] board) {
+        for (int j = 0; j < 9; j++) {
+            boolean[] numerosEncontrados = new boolean[9];
+            for (int i = 0; i < 9; i++) {
+                int numeroAtual = board[i][j];
+                if (numeroAtual != 0) {
+                    if (numerosEncontrados[numeroAtual - 1]) {
+                        
+                        return false;
+                    } else {
+                        numerosEncontrados[numeroAtual - 1] = true;
+                    }
+                } else {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
 
+    public static boolean verificarQuadrados(int[][] board) {
+        for (int k = 0; k < 9; k++) {
+            boolean[] numerosEncontrados = new boolean[9];
+            int linhaInicial = (k / 3) * 3;
+            int colunaInicial = (k % 3) * 3;
+            for (int i = linhaInicial; i < linhaInicial + 3; i++) {
+                for (int j = colunaInicial; j < colunaInicial + 3; j++) {
+                    int numeroAtual = board[i][j];
+                    if (numeroAtual != 0) {
+                        if (numerosEncontrados[numeroAtual - 1]) {
+                            return false;
+                        } else {
+                            numerosEncontrados[numeroAtual - 1] = true;
+                        }
+                    } else {
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
+    }
 
+    public static boolean verificarLinhas(int[][] board, int linha, int valor) {
+        for (int j = 0; j < 9; j++) {
+            if (board[linha][j] == valor) {
+                return false;
+            }
+        }
+        return true;
+    }
 
+    public static boolean verificarColunas(int[][] board, int coluna, int valor) {
+        for (int i = 0; i < 9; i++) {
+            if (board[i][coluna] == valor) {
+                return false;
+            }
+        }
+        return true;
+    }
 
-
-    
+    public static boolean verificarQuadrados(int[][] board, int linha, int coluna, int valor) {
+        int linhaInicial = (linha / 3) * 3;
+        int colunaInicial = (coluna / 3) * 3;
+        for (int i = linhaInicial; i < linhaInicial + 3; i++) {
+            for (int j = colunaInicial; j < colunaInicial + 3; j++) {
+                if (board[i][j] == valor) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
 
     public static void removerJogada(int[][] board) {
 
         Scanner teclado = new Scanner(System.in);
+        System.out.println("-----------------------------------------------------------------------------------------------");
+        System.out.println("Digite: Sair - Quando tiver terminado de remover sua(s) jogada(s)");
+        System.out.println("-----------------------------------------------------------------------------------------------");
         System.out.println("Digite a jogada que deseja remover no seguinte formato: (linha,coluna)");
         while (true) {
             String remoc = teclado.next();
@@ -245,6 +300,7 @@ public static boolean verificarQuadrados(int[][] board) {
     public static void adicionarJogada(int[][] board) {
         Scanner teclado = new Scanner(System.in);
         System.out.println("Faça sua(s) jogada(s)");
+
         while (true) {
             String adc = teclado.next();
             if (adc.equals("sair")) {
@@ -261,13 +317,12 @@ public static boolean verificarQuadrados(int[][] board) {
                     int valor = Integer.parseInt(adcSeparada[i + 2]);
                     jogada(linha, coluna, valor, board);
                 }
-                
+
             }
 
         }
 
     }
-
 
     public static void jogada(int linha, int coluna, int valor, int[][] board) {
         if (linha > 0 && linha <= 9 && coluna > 0 && coluna <= 9 && valor >= 0 && valor <= 9) {
