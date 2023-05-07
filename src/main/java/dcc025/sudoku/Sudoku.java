@@ -117,9 +117,10 @@ public class Sudoku {
                 removerJogada(board);
                 printSudoku(board);
             } else if ("c".equals(option1)) {
-
-                boolean verify = verificarColunas(board);
-                if (verify ==true) {
+                 boolean verifyLinha = verificarLinhas(board);
+                boolean verifyColuna = verificarColunas(board);
+                boolean verifyQuadrados = verificarQuadrados(board);
+                if (verifyColuna ==true && verifyLinha ==true && verifyQuadrados ) {
                     System.out.println("parabens, voce completou");
                 } else {
                     System.out.println("que pena, continue tentando");
@@ -138,15 +139,15 @@ public class Sudoku {
         // Verifica cada linha
 
 public static boolean verificarLinhas(int[][] board) {
-    for (int i = 0; i < 9; i++) { // Loop pelas 9 linhas do tabuleiro
-        boolean[] numerosEncontrados = new boolean[9]; // Inicializa um array para verificar a presença dos números de 1 a 9
-        for (int j = 0; j < 9; j++) { // Loop pelas 9 colunas da linha atual
+    for (int i = 0; i < 9; i++) { 
+        boolean[] numerosEncontrados = new boolean[9]; 
+        for (int j = 0; j < 9; j++) { 
             int numeroAtual = board[i][j];
-            if (numeroAtual != 0) { // Verifica se o número atual é diferente de zero (caso contrário, não precisa verificar)
-                if (numerosEncontrados[numeroAtual - 1] ) { // Se o número já foi encontrado antes, retorna false
+            if (numeroAtual != 0) { 
+                if (numerosEncontrados[numeroAtual - 1] ) { 
                     return false;
                 } else {
-                    numerosEncontrados[numeroAtual - 1] = true; // Marca o número como encontrado
+                    numerosEncontrados[numeroAtual - 1] = true; 
                 }
             }
             else{
@@ -154,25 +155,47 @@ public static boolean verificarLinhas(int[][] board) {
             }
         }
     }
-    return true; // Se chegou até aqui, todas as linhas estão corretas
+    return true; 
 }
 public static boolean verificarColunas(int[][] board) {
-    for (int j = 0; j < 9; j++) { // Loop pelas 9 colunas do tabuleiro
-        boolean[] numerosEncontrados = new boolean[9]; // Inicializa um array para verificar a presença dos números de 1 a 9
-        for (int i = 0; i < 9; i++) { // Loop pelas 9 linhas da coluna atual
+    for (int j = 0; j < 9; j++) { 
+        boolean[] numerosEncontrados = new boolean[9]; 
+        for (int i = 0; i < 9; i++) { 
             int numeroAtual = board[i][j];
-            if (numeroAtual != 0) { // Verifica se o número atual é diferente de zero (caso contrário, não precisa verificar)
-                if (numerosEncontrados[numeroAtual - 1]) { // Se o número já foi encontrado antes, retorna false
+            if (numeroAtual != 0) { 
+                if (numerosEncontrados[numeroAtual - 1]) { 
                     return false;
                 } else {
-                    numerosEncontrados[numeroAtual - 1] = true; // Marca o número como encontrado
+                    numerosEncontrados[numeroAtual - 1] = true; 
                 }
             } else {
                 return false;
             }
         }
     }
-    return true; // Se chegou até aqui, todas as colunas estão corretas
+    return true; 
+}
+public static boolean verificarQuadrados(int[][] board) {
+    for (int k = 0; k < 9; k++) { 
+        boolean[] numerosEncontrados = new boolean[9]; 
+        int linhaInicial = (k / 3) * 3; 
+        int colunaInicial = (k % 3) * 3; 
+        for (int i = linhaInicial; i < linhaInicial + 3; i++) { 
+            for (int j = colunaInicial; j < colunaInicial + 3; j++) { 
+                int numeroAtual = board[i][j];
+                if (numeroAtual != 0) { 
+                    if (numerosEncontrados[numeroAtual - 1]) { 
+                        return false;
+                    } else {
+                        numerosEncontrados[numeroAtual - 1] = true; 
+                    }
+                } else {
+                    return false;
+                }
+            }
+        }
+    }
+    return true; 
 }
 
 
@@ -221,7 +244,7 @@ public static boolean verificarColunas(int[][] board) {
 
     public static void adicionarJogada(int[][] board) {
         Scanner teclado = new Scanner(System.in);
-
+        System.out.println("Faça sua(s) jogada(s)");
         while (true) {
             String adc = teclado.next();
             if (adc.equals("sair")) {
@@ -238,11 +261,13 @@ public static boolean verificarColunas(int[][] board) {
                     int valor = Integer.parseInt(adcSeparada[i + 2]);
                     jogada(linha, coluna, valor, board);
                 }
-
+                
             }
 
         }
+
     }
+
 
     public static void jogada(int linha, int coluna, int valor, int[][] board) {
         if (linha > 0 && linha <= 9 && coluna > 0 && coluna <= 9 && valor >= 0 && valor <= 9) {
