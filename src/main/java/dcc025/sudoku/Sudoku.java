@@ -2,14 +2,13 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  */
 package dcc025.sudoku;
-
 import static java.lang.System.exit;
 import java.util.Random;
 import java.util.Scanner;
 
 /**
  *
- * @author marlo
+ * @author marlon
  */
 //Marlon Ruffo Nascimento
 //Matrícula: 202065165AC
@@ -52,10 +51,7 @@ public static void apresentacao() {
     System.out.println("Boas vindas!! Você inicializou o jogo SUDOKU");
     System.out.println("Defina os valores de seu tabuleiro no seguinte formato:");
     System.out.println("(linha,coluna,valor) podendo definir mais de uma jogada por vez no seguinte formato: ");
-    System.out.println("(linha,coluna,valor) (linha,coluna,valor),etc.");
-    System.out.println("//////////////////////////////////////////////// ");
-    System.out.println("SE ATENTE: DE UM ESPAÇO ENTRE JOGADAS ");
-    System.out.println("//////////////////////////////////////////////// ");
+    System.out.println("(linha,coluna,valor)(linha,coluna,valor),etc.");
     System.out.println("Basta digitar Sair para mudar de ação");
     System.out.println("Como você gostaria de jogar esse jogo?");
     System.out.println("Opções disponíveis:");
@@ -109,6 +105,7 @@ public static void apresentacao() {
         }
         adicionarNumerosAleatorios(board, quantidade);
         System.out.println("Tabuleiro gerado de forma aleatória:");
+        printSudoku(board);
         acoes(board);
 
     }
@@ -129,7 +126,7 @@ public static void apresentacao() {
     }
 
     public static void acoes(int board[][]) {
-        printSudoku(board);
+
         Scanner teclado = new Scanner(System.in);
         while (true) {
             System.out.println("Selecione qual a ação que gostaria de fazer dentre as opções abaixo:");
@@ -154,9 +151,11 @@ public static void apresentacao() {
                 boolean verifyQuadrados = verificarQuadrados(board);
 
                 if (verifyColuna == true && verifyLinha == true && verifyQuadrados == true) {
+                    System.out.println("-----------------------------------------------------------------------------------------------");
                     System.out.println("Parabens, você completou o SUDOKU, Gostaria de jogar novamente?");
-                    System.out.println("a) SIM)");
+                    System.out.println("a) SIM");
                     System.out.println("Pressione qualquer outra para sair");
+                    System.out.println("-----------------------------------------------------------------------------------------------");
                     String option3 = teclado.next().toLowerCase();
                     if ("a".equals(option3)) {
                         apresentacao();
@@ -166,7 +165,9 @@ public static void apresentacao() {
                     }
 
                 } else {
-                    System.out.println("Que pena, continue tentando!");
+                    System.out.println("-----------------------------------------------------------------------------------------------");
+                    System.out.println("Que pena, Há um erro com seu SUDOKU - continue tentando!");
+                    System.out.println("-----------------------------------------------------------------------------------------------");
                 }
 
             } else if ("d".equals(option1)) {
@@ -289,7 +290,7 @@ public static void apresentacao() {
             } else {
                 String[] remocSeparada;
                 remoc = remoc.replaceAll("\\(", "");
-                remoc = remoc.replaceAll("\\)", "");
+                remoc = remoc.replaceAll("\\)", ",");
                 remoc = remoc.replaceAll("\\s+", "");
                 remocSeparada = remoc.split(",");
                 for (int i = 0; i < remocSeparada.length; i += 2) {
@@ -328,7 +329,7 @@ public static void apresentacao() {
             if (!adc.equals("sair")) {
 
                 adc = adc.replaceAll("\\(", "");
-                adc = adc.replaceAll("\\)", "");
+                adc = adc.replaceAll("\\)", ",");
                 adc = adc.replaceAll("\\s+", "");
                 String[] adcSeparada;
                 j = 0;
